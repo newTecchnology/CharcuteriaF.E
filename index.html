@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lista de Productos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    
+    <link rel="stylesheet" href="style.css">
+    
+</head>
+<body class="p-4 sm:p-8 flex items-start justify-center min-h-screen pt-10">
+
+    <div class="w-full container-full bg-white p-4 rounded-3xl shadow-xl relative no-print">
+        
+        <div class="flex flex-col-reverse sm:flex-row sm:justify-between sm:items-center mb-4">
+            
+            <div class="w-full mt-4 sm:mt-0">
+                <h2 class="text-lg font-black text-gray-900 mb-1">NOMBRE DEL CLIENTE</h2>
+                <div class="relative">
+                    <input type="text" id="clientNameInput" placeholder="Ingresa nombre..."
+                           class="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 pl-10 text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </div>
+            </div>
+            
+            <div class="flex space-x-2 w-full sm:w-auto justify-end">
+                <button id="printButton" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full shadow-lg transition duration-300 transform hover:scale-105">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zM9 9V5a2 2 0 012-2h2a2 2 0 012 2v4" />
+                    </svg>
+                </button>
+                <button id="generateQrButton" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full shadow-lg transition duration-300 transform hover:scale-105">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    </svg>
+                </button>
+                <button id="scanButton" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-full shadow-lg transition duration-300 transform hover:scale-105">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <div id="scannerInputContainer" class="mb-4">
+            <input type="text" id="scannerInput" placeholder="Escanea el código aquí..."
+                   class="w-full px-3 py-2 rounded-2xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300">
+        </div>
+
+        <div class="mb-4">
+            <input type="text" id="searchInput" placeholder="Buscar productos..."
+                   class="w-full px-3 py-2 rounded-2xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300">
+        </div>
+        
+        <div id="productList" class="space-y-2 mb-6">
+            </div>
+
+        <div id="addedProductsList" class="space-y-2 relative">
+            <h3 class="text-lg font-semibold text-gray-700">Productos Agregados:</h3>
+            </div>
+
+    </div>
+    
+    <div id="calculatorModal" class="modal">
+        <div class="modal-content mt-20 sm:mt-0">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="calculatorTitle" class="text-xl font-bold text-gray-800"></h2>
+                <button id="closeCalculatorButton" class="text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="mb-4">
+                <input type="text" id="calculatorInput" class="w-full text-right text-3xl font-bold p-4 bg-gray-100 rounded-xl focus:outline-none" inputmode="none">
+            </div>
+
+            <div class="calculator-grid">
+                <div class="calculator-button" data-value="7">7</div>
+                <div class="calculator-button" data-value="8">8</div>
+                <div class="calculator-button" data-value="9">9</div>
+                <div class="calculator-button operator bg-blue-500 hover:bg-blue-600 text-white" data-value="C">C</div>
+
+                <div class="calculator-button" data-value="4">4</div>
+                <div class="calculator-button" data-value="5">5</div>
+                <div class="calculator-button" data-value="6">6</div>
+                <div class="calculator-button" data-value=".">.</div>
+
+                <div class="calculator-button" data-value="1">1</div>
+                <div class="calculator-button" data-value="2">2</div>
+                <div class="calculator-button" data-value="3">3</div>
+                <div id="emptySpacer" class="hidden sm:block"></div> <button id="acceptButton" class="calculator-accept-button">Añadir</button>
+
+                <div class="calculator-button" data-value="0">0</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="unitModal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-xl font-bold mb-4">Selecciona la Unidad</h2>
+            <p id="unitModalProduct" class="mb-4"></p>
+            <div id="unitOptions" class="flex flex-col space-y-4">
+                <button id="selectKgButton" class="unit-button">KG</button>
+                <button id="selectGramosButton" class="unit-button">Gramos</button>
+                <button id="selectBsButton" class="unit-button">Bs.</button>
+                <button id="selectLonjaButton" class="unit-button">Lonjas</button>
+            </div>
+            <button id="closeUnitModal" class="text-gray-500 hover:text-gray-700 mt-4">Cerrar</button>
+        </div>
+    </div>
+    
+    <div id="qrModal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">Código QR</h2>
+                <button id="closeQrModal" class="text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div id="qrcode" class="w-full flex justify-center p-4"></div>
+            <p class="text-sm text-gray-500 mt-2">Escanea este código para ver la lista de productos.</p>
+        </div>
+    </div>
+
+    <div id="scannerModal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">Escáner de Código</h2>
+                <button id="closeScannerButton" class="text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div id="qr-reader" style="width: 100%;"></div>
+            <div id="qr-reader-results"></div>
+            <div id="qr-reader-error" class="text-red-500 mt-2 text-center"></div>
+        </div>
+    </div>
+    
+    <div id="printOnlyContent">
+        <div class="text-center mb-4">
+            <h1 class="text-2xl font-extrabold text-gray-900">LISTA DE PRODUCTOS</h1>
+            <h2 id="printClientName" class="text-lg font-bold text-gray-900 mt-2"></h2>
+        </div>
+        <div id="printProductsList" class="space-y-2">
+            </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
